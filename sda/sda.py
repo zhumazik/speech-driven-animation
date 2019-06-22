@@ -1,9 +1,9 @@
 from torchvision import transforms
 import torch
-import torchaudio
-from .encoder_image import Encoder
-from .img_generator import Generator
-from .rnn_audio import RNN
+#import torchaudio
+from encoder_image import Encoder
+from img_generator import Generator
+from rnn_audio import RNN
 
 from scipy import signal
 from skimage import transform as tf
@@ -129,7 +129,7 @@ class VideoAnimator():
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-        self.audio_transform = torchaudio.transforms.Scale()
+        #self.audio_transform = torchaudio.transforms.Scale()
 
         self.encoder = RNN(self.audio_feat_len, self.aud_enc_dim, self.rnn_gen_dim,
                            self.audio_rate, init_kernel=0.005, init_stride=0.001)
@@ -218,7 +218,7 @@ class VideoAnimator():
             frame = self.preprocess_img(frame)
 
         if isinstance(audio, str):  # if we have a path then grab the audio clip
-            audio, fs = torchaudio.load(audio, channels_first=False)
+            #audio, fs = torchaudio.load(audio, channels_first=False)
             if audio.size(1) != 1:
                 audio = audio[:, 0].view(-1, 1)
 
