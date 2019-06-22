@@ -1,7 +1,7 @@
 import numpy as np
 import torch.nn as nn
 import torch
-from .utils import calculate_padding
+from utils import calculate_padding
 
 
 class Deconv(nn.Module):

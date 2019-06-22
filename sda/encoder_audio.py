@@ -1,6 +1,6 @@
 import torch.nn as nn
 import math
-from .utils import calculate_padding, prime_factors, calculate_output_size
+from utils import calculate_padding, prime_factors, calculate_output_size
 
 class Encoder(nn.Module):
     def __init__(self, code_size, rate, feat_length, init_kernel=None, init_stride=None, num_feature_maps=16,

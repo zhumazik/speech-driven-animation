@@ -1,9 +1,9 @@
 from torchvision import transforms
 import torch
-import torchaudio
-from .encoder_image import Encoder
-from .img_generator import Generator
-from .rnn_audio import RNN
+#import torchaudio
+from encoder_image import Encoder
+from img_generator import Generator
+from rnn_audio import RNN
 
 from scipy import signal
 from skimage import transform as tf
@@ -43,11 +43,11 @@ def tempdir():
 
 def get_audio_feature_extractor(model_path="grid", gpu=-1):
     if model_path == "grid":
-        model_path = os.path.split(__file__)[0] + "/data/grid.dat"
+        model_path = os.path.split(__file__)[0] + "/grid.dat"
     elif model_path == "timit":
-        model_path = os.path.split(__file__)[0] + "/data/timit.dat"
+        model_path = os.path.split(__file__)[0] + "/timit.dat"
     elif model_path == "crema":
-        model_path = os.path.split(__file__)[0] + "/data/crema.dat"
+        model_path = os.path.split(__file__)[0] + "/crema.dat"
 	
 
     if gpu < 0:
@@ -94,11 +94,11 @@ class VideoAnimator():
     def __init__(self, model_path="grid", gpu=-1):
 
         if model_path == "grid":
-            model_path = os.path.split(__file__)[0] + "/data/grid.dat"
+            model_path = os.path.split(__file__)[0] + "/grid.dat"
         elif model_path == "timit":
-            model_path = os.path.split(__file__)[0] + "/data/timit.dat"
+            model_path = os.path.split(__file__)[0] + "/timit.dat"
         elif model_path == "crema":
-            model_path = os.path.split(__file__)[0] + "/data/crema.dat"
+            model_path = os.path.split(__file__)[0] + "/crema.dat"
 
         if gpu < 0:
             self.device = torch.device("cpu")
@@ -129,7 +129,7 @@ class VideoAnimator():
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-        self.audio_transform = torchaudio.transforms.Scale()
+        #self.audio_transform = torchaudio.transforms.Scale()
 
         self.encoder = RNN(self.audio_feat_len, self.aud_enc_dim, self.rnn_gen_dim,
                            self.audio_rate, init_kernel=0.005, init_stride=0.001)
@@ -158,14 +158,14 @@ class VideoAnimator():
     def save_video(self, video, audio, path, experimental_ffmpeg=False):
         with tempdir() as dirpath:
             # Save the video file
-            writer = sio.FFmpegWriter(dirpath + "/tmp.avi",
+            writer = sio.FFmpegWriter(dirpath + "/tmp.mp4",
                                       inputdict={'-r': str(self.video_rate) + "/1", },
                                       outputdict={'-r': str(self.video_rate) + "/1", }
                                       )
             for i in range(video.shape[0]):
                 writer.writeFrame(np.rollaxis(video[i, :, :, :], 0, 3))
             writer.close()
-
+				
             # Save the audio file
             wav.write(dirpath + "/tmp.wav", self.audio_rate, audio)
 
@@ -224,7 +224,7 @@ class VideoAnimator():
 
             if fs != self.audio_rate:
                 seq_length = audio.shape[0]
-                speech = torch.from_numpy(signal.resample(audio, int(seq_length * self.audio_rate / fs))).float()
+                speech = torch.from_numpy(signal.resample(audio.cpu().detach().numpy(), int(seq_length * self.audio_rate / fs))).float()
                 speech = speech.view(-1, 1)
             else:
                 speech = audio.view(-1,1)
@@ -239,6 +239,7 @@ class VideoAnimator():
                     2 * signal.resample(audio, int(seq_length * self.audio_rate / fs)) / max_value).float()
                 speech = speech.view(-1, 1)
             else:
+                #audio = torch.from_numpy(audio).float()
                 speech = audio.view(-1, 1)
 
         frame = self.img_transform(frame).to(self.device)

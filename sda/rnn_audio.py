@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .encoder_audio import Encoder
+from encoder_audio import Encoder
 
 
 class RNN(nn.Module):

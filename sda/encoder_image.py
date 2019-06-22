@@ -1,6 +1,6 @@
 import numpy as np
 import torch.nn as nn
-from .utils import calculate_padding, is_power2
+from utils import calculate_padding, is_power2
 
 class Encoder(nn.Module):
     def __init__(self, code_size, img_size, kernel_size=4, num_input_channels=3, num_feature_maps=64, batch_norm=True):
