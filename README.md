@@ -1,3 +1,7 @@
+This is windows-adapted version of speech-driven-animation project from DinoMan. All the text below is taken from the original repository.
+
+
+
 # Speech-Driven Animation
 
 This library implements the end-to-end facial synthesis model described in this [paper](https://sites.google.com/view/facialsynthesis/home).
